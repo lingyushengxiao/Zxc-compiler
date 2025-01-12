@@ -656,7 +656,7 @@ class ConstDefAST: public BaseAST
 {
  public:
   std::string Ident;
-  std::unique_ptr<BaseAST> Arraydef;
+  std::unique_ptr<BaseAST> ArrayDef;
   std::unique_ptr<BaseAST> constinitvalue;
   std::unique_ptr<BaseAST> constdef;
   std::string dump() const override
@@ -664,13 +664,13 @@ class ConstDefAST: public BaseAST
     if (debug) std::cout << "ConstDefAST" << std::endl;
     if (currentsymbt == NULL)   
     {
-      if (Arraydef == NULL)   
+      if (ArrayDef == NULL)   
       {
         symbt.globalsymbol[Ident] = {1, constinitvalue->cal(), Ident + "_00"};
       }
       else      
       {
-        std::string arrdim = Arraydef->ArrayCal();
+        std::string arrdim = ArrayDef->ArrayCal();
         char *spl = std::strtok((char *)arrdim.c_str(), ",");
         std::vector<int> dim;
         while(spl)
@@ -697,13 +697,13 @@ class ConstDefAST: public BaseAST
     }
     else     
     {
-      if (Arraydef == NULL)   
+      if (ArrayDef == NULL)   
       {
         currentsymbt->smap[currentsymbt->dep][Ident] = {1, constinitvalue->cal(), Ident + std::string("_") + std::to_string(currentsymbt->dep)};
       }
       else    
       {
-        std::string arrdim = Arraydef->ArrayCal();
+        std::string arrdim = ArrayDef->ArrayCal();
 
         char *spl = std::strtok((char *)arrdim.c_str(), ",");
         std::vector<int> dim;
@@ -906,7 +906,7 @@ class VarDefAST: public BaseAST
 {
 public:
   std::string Ident;
-  std::unique_ptr<BaseAST> Arraydef;
+  std::unique_ptr<BaseAST> ArrayDef;
   std::unique_ptr<BaseAST> initvalue;
   std::unique_ptr<BaseAST> vardef;
   std::string dump() const override
@@ -914,7 +914,7 @@ public:
     if (debug) std::cout << "VarDefAST:" << std::endl;
     if (currentsymbt == NULL)  //global var
     {
-      if (Arraydef == NULL)    // var
+      if (ArrayDef == NULL)    // var
       {
         if (initvalue == NULL)
         {
@@ -932,7 +932,7 @@ public:
       {
         if (initvalue == NULL || ((InitValAST *)initvalue.get())->zeroinit == 1)
         {
-          std::string arrdim = Arraydef->ArrayCal();
+          std::string arrdim = ArrayDef->ArrayCal();
           char *spl = std::strtok((char *)arrdim.c_str(), ",");
           std::vector<int> dim;
           while(spl)
@@ -945,7 +945,7 @@ public:
         }
         else
         {
-          std::string arrdim = Arraydef->ArrayCal();
+          std::string arrdim = ArrayDef->ArrayCal();
           char *spl = std::strtok((char *)arrdim.c_str(), ",");
           std::vector<int> dim;
           while(spl)
@@ -974,7 +974,7 @@ public:
     }
     else     // local
     {
-      if (Arraydef == NULL)   // var
+      if (ArrayDef == NULL)   // var
       {
         if (initvalue == NULL)
         {
@@ -1005,10 +1005,10 @@ public:
           if (currentsymbt->nameset.count(Ident + std::string("_") + std::to_string(currentsymbt->dep)) == 0)
           {
             currentsymbt->nameset.insert(Ident + std::string("_") + std::to_string(currentsymbt->dep));
-            std::string arrdim = Arraydef->ArrayCal();
+            std::string arrdim = ArrayDef->ArrayCal();
             std::cout << "  @" << Ident << "_" << currentsymbt->dep << " = alloc " << globalstr << std::endl;
           }
-          std::string arrdim = Arraydef->ArrayCal();
+          std::string arrdim = ArrayDef->ArrayCal();
           char *spl = std::strtok((char *)arrdim.c_str(), ",");
           std::vector<int> dim;
           while(spl)
@@ -1023,7 +1023,7 @@ public:
           if (currentsymbt->nameset.count(Ident + std::string("_") + std::to_string(currentsymbt->dep)) == 0)
           {
             currentsymbt->nameset.insert(Ident + std::string("_") + std::to_string(currentsymbt->dep));
-            std::string arrdim = Arraydef->ArrayCal();
+            std::string arrdim = ArrayDef->ArrayCal();
             std::cout << "  @" << Ident << "_" << currentsymbt->dep << " = alloc " << globalstr << std::endl;
 
             char *spl = std::strtok((char *)arrdim.c_str(), ",");
@@ -1039,7 +1039,7 @@ public:
           }
           else
           {
-            std::string arrdim = Arraydef->ArrayCal();
+            std::string arrdim = ArrayDef->ArrayCal();
             char *spl = std::strtok((char *)arrdim.c_str(), ",");
             std::vector<int> dim;
             while(spl)

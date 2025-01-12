@@ -197,14 +197,14 @@ FuncFParam
   auto ast = new FuncFParamAST();
   ast->isarray = 1;
   ast->Ident = *unique_ptr<string>($2);
-  ast->Arraydef = NULL;
+  ast->ArrayDef = NULL;
   $$ = ast;
 }
 | BType IDENT '[' ']' ArrayDef {
   auto ast = new FuncFParamAST();
   ast->isarray = 1;
   ast->Ident = *unique_ptr<string>($2);
-  ast->Arraydef = unique_ptr<BaseAST>($5);
+  ast->ArrayDef = unique_ptr<BaseAST>($5);
   $$ = ast;
 }
 ;
@@ -279,7 +279,7 @@ ConstDef
   | IDENT ArrayDef '=' ConstInitVal {
     auto ast = new ConstDefAST();
     ast->Ident = *unique_ptr<string>($1);
-    ast->Arraydef = unique_ptr<BaseAST>($2);
+    ast->ArrayDef = unique_ptr<BaseAST>($2);
     ast->constinitvalue = unique_ptr<BaseAST>($4);
     ast->constdef = NULL;
     $$ = ast;
@@ -294,7 +294,7 @@ ConstDef
   | IDENT ArrayDef '=' ConstInitVal ',' ConstDef {
     auto ast = new ConstDefAST();
     ast->Ident = *unique_ptr<string>($1);
-    ast->Arraydef = unique_ptr<BaseAST>($2);
+    ast->ArrayDef = unique_ptr<BaseAST>($2);
     ast->constinitvalue = unique_ptr<BaseAST>($4);
     ast->constdef = unique_ptr<BaseAST>($6);
     $$ = ast;
@@ -310,7 +310,7 @@ ArrayDef
 | '[' ConstExp ']' ArrayDef {
   auto ast = new ArrayDefAST();
   ast->ConstExp = unique_ptr<BaseAST>($2);
-  ast->Arraydef = unique_ptr<BaseAST>($4);
+  ast->ArrayDef = unique_ptr<BaseAST>($4);
   $$ = ast;
 }
 
@@ -328,7 +328,7 @@ ConstInitVal
 | '{' ConstArrayInitVal '}' {  // ConstArrayInitVal 表示 ConstInitVal {"," ConstInitVal}
   auto ast = new ConstInitValAST();
   ast->ConstExp = NULL;
-  ast->constarrinitvalue = unique_ptr<BaseAST>($2);
+  ast->ConstArrayInitValue = unique_ptr<BaseAST>($2);
   $$ = ast;
 }
 ;
@@ -375,22 +375,22 @@ VarDef
 | IDENT ArrayDef {
   auto ast = new VarDefAST();
   ast->Ident = *unique_ptr<string>($1);
-  ast->Arraydef = unique_ptr<BaseAST>($2);
+  ast->ArrayDef = unique_ptr<BaseAST>($2);
   ast->vardef = NULL;
   $$ = ast;
 }
 | IDENT '=' InitVal {
   auto ast = new VarDefAST();
   ast->Ident = *unique_ptr<string>($1);
-  ast->initval = unique_ptr<BaseAST>($3);
+  ast->initvalue = unique_ptr<BaseAST>($3);
   ast->vardef = NULL;
   $$ = ast;
 }
 | IDENT ArrayDef '=' InitVal{
   auto ast = new VarDefAST();
   ast->Ident = *unique_ptr<string>($1);
-  ast->Arraydef = unique_ptr<BaseAST>($2);
-  ast->initval = unique_ptr<BaseAST>($4);
+  ast->ArrayDef = unique_ptr<BaseAST>($2);
+  ast->initvalue = unique_ptr<BaseAST>($4);
   ast->vardef = NULL;
   $$ = ast;
 }
@@ -403,22 +403,22 @@ VarDef
 | IDENT ArrayDef ',' VarDef {
   auto ast = new VarDefAST();
   ast->Ident = *unique_ptr<string>($1);
-  ast->Arraydef = unique_ptr<BaseAST>($2);
+  ast->ArrayDef = unique_ptr<BaseAST>($2);
   ast->vardef = unique_ptr<BaseAST>($4);
   $$ = ast;
 }
 | IDENT '=' InitVal ',' VarDef {
   auto ast = new VarDefAST();
   ast->Ident = *unique_ptr<string>($1);
-  ast->initval = unique_ptr<BaseAST>($3);
+  ast->initvalue = unique_ptr<BaseAST>($3);
   ast->vardef = unique_ptr<BaseAST>($5);
   $$ = ast;
 }
 | IDENT ArrayDef '=' InitVal ',' VarDef {
   auto ast = new VarDefAST();
   ast->Ident = *unique_ptr<string>($1);
-  ast->Arraydef = unique_ptr<BaseAST>($2);
-  ast->initval = unique_ptr<BaseAST>($4);
+  ast->ArrayDef = unique_ptr<BaseAST>($2);
+  ast->initvalue = unique_ptr<BaseAST>($4);
   ast->vardef = unique_ptr<BaseAST>($6);
   $$ = ast;
 }
@@ -434,28 +434,28 @@ InitVal
   auto ast = new InitValAST();
   ast->zeroinit = 1;
   ast->exp = NULL;
-  ast->arrayinitval = NULL;
+  ast->arrayinitvalue = NULL;
   $$ = ast;
 }
 | '{' ArrayInitVal '}' {   // ArrayInitVal 表示 InitVal {"," InitVal}
   auto ast = new InitValAST();
   ast->exp = NULL;
-  ast->arrayinitval = unique_ptr<BaseAST>($2);
+  ast->arrayinitvalue = unique_ptr<BaseAST>($2);
   $$ = ast;
 }
 ;
 
 ArrayInitVal
 : InitVal {
-  auto ast = new ArrayInitValAST();
-  ast->initval = unique_ptr<BaseAST>($1);
-  ast->arrayinitval = NULL;
+  auto ast = new ArrInitValAST();
+  ast->initvalue = unique_ptr<BaseAST>($1);
+  ast->arrayinitvalue = NULL;
   $$ = ast;
 }
 | InitVal ',' ArrayInitVal {
-  auto ast = new ArrayInitValAST();
-  ast->initval = unique_ptr<BaseAST>($1);
-  ast->arrayinitval = unique_ptr<BaseAST>($3);
+  auto ast = new ArrInitValAST();
+  ast->initvalue = unique_ptr<BaseAST>($1);
+  ast->arrayinitvalue = unique_ptr<BaseAST>($3);
   $$ = ast;
 }
 ;
