@@ -65,30 +65,28 @@ class BaseAST {
  public:
   virtual ~BaseAST() = default;
 
-  //对于成功案例中的Dump
   virtual std::string dump() const = 0;
-  //对应成功案例中的pDump
   virtual std::string ddump() {
     return std::string("Arrived a wrong place!");
   }
-  //对应Calc
+
   virtual int cal() {
     return 0;
   }
-  //对应ArrCalc
+
   virtual std::string ArrayCal() {
     std::string s;
     return s;
   }
-  //对应assign
+
   virtual int Assign(std::string s){
 
   }
-  //对应allocpara
+
   virtual int Allocpara() {
     return 0;
   }
-  //对应fetch
+
   virtual std::string Fetch(std::vector<int> dim, std::string Ident, int index, int k) {
     if (k == 0)
     {
@@ -101,11 +99,9 @@ class BaseAST {
     now++;
     return std::string("%") + std::to_string(now); 
   }
-  //不同的init对应不同的fillinit
   virtual void init(std::vector<int> dim, int * a, int depth) {};
   virtual void init(std::vector<int> dim, std::string Ident, int depth) {};
   
-  //对应DumpArray
   virtual void dumparr(std::vector<int> dim, int * a, int depth){
     if (depth == dim.size() - 1)
     {
@@ -739,7 +735,7 @@ public:
   }
 };
 
-//对应ArrayInitValAST
+
 class ArrInitValAST: public BaseAST
 {
  public:
