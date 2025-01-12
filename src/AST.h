@@ -338,22 +338,22 @@ class FuncFParamAST : public BaseAST
 {
 public:
   int isarray;
-  std::string ident;
+  std::string Ident;
   std::unique_ptr<BaseAST> ArrayDef;
   std::string dump() const override
   {
     if (isarray == 0)
     {
-      std::cout << "@" << ident << ": " << "i32";
+      std::cout << "@" << Ident << ": " << "i32";
     }
     else
     {
       if (ArrayDef == NULL)
-        std::cout << "@" << ident << ": " << "*i32";
+        std::cout << "@" << Ident << ": " << "*i32";
       else
       {
         std::string arrdim = ArrayDef->ArrayCal();
-        std::cout << "@" << ident << ": *" << globalstr;
+        std::cout << "@" << Ident << ": *" << globalstr;
       }
     }
     std::string str;
@@ -363,24 +363,24 @@ public:
   {
     if (isarray == 0)
     {
-      currentsymbt->nameset.insert(ident + std::string("_0"));
-      std::cout << "  @" << ident << "_0" << " = alloc i32" << std::endl;
-      currentsymbt->smap[0][ident] = {0, 0, ident + std::string("_0")};
-      std::cout << "  store @" << ident << ", @" << ident << "_0" << std::endl;
+      currentsymbt->nameset.insert(Ident + std::string("_0"));
+      std::cout << "  @" << Ident << "_0" << " = alloc i32" << std::endl;
+      currentsymbt->smap[0][Ident] = {0, 0, Ident + std::string("_0")};
+      std::cout << "  store @" << Ident << ", @" << Ident << "_0" << std::endl;
       return 0;
     }
     if (ArrayDef == NULL)
     {
-      currentsymbt->nameset.insert(ident + std::string("_0"));
-      std::cout << "  @" << ident << "_0" << " = alloc *i32" << std::endl;
-      currentsymbt->smap[0][ident] = {4, 1, ident + std::string("_0")};
-      std::cout << "  store @" << ident << ", @" << ident << "_0" << std::endl;
+      currentsymbt->nameset.insert(Ident + std::string("_0"));
+      std::cout << "  @" << Ident << "_0" << " = alloc *i32" << std::endl;
+      currentsymbt->smap[0][Ident] = {4, 1, Ident + std::string("_0")};
+      std::cout << "  store @" << Ident << ", @" << Ident << "_0" << std::endl;
 
       return 0;
     }
     else
     {
-      currentsymbt->nameset.insert(ident + std::string("_0"));
+      currentsymbt->nameset.insert(Ident + std::string("_0"));
       std::string arrdim = ArrayDef->ArrayCal();
       char *spl = std::strtok((char *)arrdim.c_str(), ",");
       std::vector<int> dim;
@@ -389,9 +389,9 @@ public:
         dim.push_back(atoi(spl));
         spl = strtok(NULL, ",");
       }
-      std::cout << "  @" << ident << "_0" << " = alloc *" << globalstr << std::endl;
-      currentsymbt->smap[0][ident] = {4, (int)dim.size() + 1, ident + std::string("_0")};
-      std::cout << "  store @" << ident << ", @" << ident << "_0" << std::endl;
+      std::cout << "  @" << Ident << "_0" << " = alloc *" << globalstr << std::endl;
+      currentsymbt->smap[0][Ident] = {4, (int)dim.size() + 1, Ident + std::string("_0")};
+      std::cout << "  store @" << Ident << ", @" << Ident << "_0" << std::endl;
       return 0;
     }
     return 0;
@@ -496,12 +496,12 @@ class ConstArrayInitValAST: public BaseAST
       constarrinitvalue->init(dim, a, depth);
     }
   }
-  void init(std::vector<int> dim, std::string ident, int depth) override
+  void init(std::vector<int> dim, std::string Ident, int depth) override
   {
-    constinitvalue->init(dim, ident, depth);
+    constinitvalue->init(dim, Ident, depth);
     if (constarrinitvalue)
     {
-      constarrinitvalue->init(dim, ident, depth);
+      constarrinitvalue->init(dim, Ident, depth);
     }
   }
 };
@@ -571,11 +571,11 @@ class ConstInitValAST: public BaseAST
     }
   }
 
-  void init(std::vector<int> dim, std::string ident, int depth) override
+  void init(std::vector<int> dim, std::string Ident, int depth) override
   {
     if (ConstExp)
     {
-      std::string dst = BaseAST::Fetch(dim, ident, curr, dim.size() - 1);
+      std::string dst = BaseAST::Fetch(dim, Ident, curr, dim.size() - 1);
       curr++;
       std::cout << "  store " << ConstExp->cal() << ", " << dst << std::endl;
       return;
@@ -603,7 +603,7 @@ class ConstInitValAST: public BaseAST
     {
       for (int i = 0; i < sz; ++i)
       {
-        std::string dst = BaseAST::Fetch(dim, ident, curr, dim.size() - 1);
+        std::string dst = BaseAST::Fetch(dim, Ident, curr, dim.size() - 1);
         curr++;
         std::cout << "  store " << "0" << ", " << dst << std::endl;
       }
@@ -611,11 +611,11 @@ class ConstInitValAST: public BaseAST
     }
     if (ConstArrayInitValue)
     {
-      ConstArrayInitValue->init(dim, ident, depth + 1);
+      ConstArrayInitValue->init(dim, Ident, depth + 1);
       int repeat = (curr + sz - 1) / sz * sz - curr;
       for (int i = 0; i < repeat; ++i)
       {
-        std::string dst = BaseAST::Fetch(dim, ident, curr, dim.size() - 1);
+        std::string dst = BaseAST::Fetch(dim, Ident, curr, dim.size() - 1);
         curr++;
         std::cout << "  store " << "0" << ", " << dst << std::endl;
       }
@@ -655,8 +655,8 @@ public:
 class ConstDefAST: public BaseAST
 {
  public:
-  std::string ident;
-  std::unique_ptr<BaseAST> arraydef;
+  std::string Ident;
+  std::unique_ptr<BaseAST> Arraydef;
   std::unique_ptr<BaseAST> constinitvalue;
   std::unique_ptr<BaseAST> constdef;
   std::string dump() const override
@@ -664,13 +664,13 @@ class ConstDefAST: public BaseAST
     if (debug) std::cout << "ConstDefAST" << std::endl;
     if (currentsymbt == NULL)   
     {
-      if (arraydef == NULL)   
+      if (Arraydef == NULL)   
       {
-        symbt.globalsymbol[ident] = {1, constinitvalue->cal(), ident + "_00"};
+        symbt.globalsymbol[Ident] = {1, constinitvalue->cal(), Ident + "_00"};
       }
       else      
       {
-        std::string arrdim = arraydef->ArrayCal();
+        std::string arrdim = Arraydef->ArrayCal();
         char *spl = std::strtok((char *)arrdim.c_str(), ",");
         std::vector<int> dim;
         while(spl)
@@ -678,8 +678,8 @@ class ConstDefAST: public BaseAST
           dim.push_back(atoi(spl));
           spl = strtok(NULL, ",");
         }
-        symbt.globalsymbol[ident] = {3, (int)dim.size(), ident + "_00"};
-        std::cout << "global @" << ident + "_00" << " = alloc " << globalstr << ", ";
+        symbt.globalsymbol[Ident] = {3, (int)dim.size(), Ident + "_00"};
+        std::cout << "global @" << Ident + "_00" << " = alloc " << globalstr << ", ";
         int k = 1;
         for (int i = 0; i < dim.size(); ++i)
         {
@@ -697,13 +697,13 @@ class ConstDefAST: public BaseAST
     }
     else     
     {
-      if (arraydef == NULL)   
+      if (Arraydef == NULL)   
       {
-        currentsymbt->smap[currentsymbt->dep][ident] = {1, constinitvalue->cal(), ident + std::string("_") + std::to_string(currentsymbt->dep)};
+        currentsymbt->smap[currentsymbt->dep][Ident] = {1, constinitvalue->cal(), Ident + std::string("_") + std::to_string(currentsymbt->dep)};
       }
       else    
       {
-        std::string arrdim = arraydef->ArrayCal();
+        std::string arrdim = Arraydef->ArrayCal();
 
         char *spl = std::strtok((char *)arrdim.c_str(), ",");
         std::vector<int> dim;
@@ -712,10 +712,10 @@ class ConstDefAST: public BaseAST
           dim.push_back(atoi(spl));
           spl = strtok(NULL, ",");
         }
-        currentsymbt->smap[currentsymbt->dep][ident] = {3, (int)dim.size(), ident + std::string("_") + std::to_string(currentsymbt->dep)};
-        std::cout << "  @" << ident << "_" << currentsymbt->dep << " = alloc " << globalstr << std::endl;
+        currentsymbt->smap[currentsymbt->dep][Ident] = {3, (int)dim.size(), Ident + std::string("_") + std::to_string(currentsymbt->dep)};
+        std::cout << "  @" << Ident << "_" << currentsymbt->dep << " = alloc " << globalstr << std::endl;
         curr = 0;
-        constinitvalue->init(dim, std::string("@") + ident + "_" + std::to_string(currentsymbt->dep), 0);
+        constinitvalue->init(dim, std::string("@") + Ident + "_" + std::to_string(currentsymbt->dep), 0);
       }
     }
     if (constdef)
@@ -772,12 +772,12 @@ class ArrInitValAST: public BaseAST
       arrayinitvalue->init(dim, a, depth);
     }
   }
-  void init(std::vector<int> dim, std::string ident, int depth) override
+  void init(std::vector<int> dim, std::string Ident, int depth) override
   {
-    initvalue->init(dim, ident, depth);
+    initvalue->init(dim, Ident, depth);
     if (arrayinitvalue)
     {
-      arrayinitvalue->init(dim, ident, depth);
+      arrayinitvalue->init(dim, Ident, depth);
     }
   }
 };
@@ -849,12 +849,12 @@ public:
       curr = (curr + sz - 1) / sz * sz;
     }
   }
-  void init(std::vector<int> dim, std::string ident, int depth) override
+  void init(std::vector<int> dim, std::string Ident, int depth) override
   {
     if (exp)
     {
       std::string src = exp->dump();
-      std::string dst = BaseAST::Fetch(dim, ident, curr, dim.size() - 1);
+      std::string dst = BaseAST::Fetch(dim, Ident, curr, dim.size() - 1);
       curr++;
       std::cout << "  store " << src << ", " << dst << std::endl;
       return;
@@ -882,7 +882,7 @@ public:
     {
       for (int i = 0; i < sz; ++i)
       {
-        std::string dst = BaseAST::Fetch(dim, ident, curr, dim.size() - 1);
+        std::string dst = BaseAST::Fetch(dim, Ident, curr, dim.size() - 1);
         curr++;
         std::cout << "  store " << "0" << ", " << dst << std::endl;
       }
@@ -890,11 +890,11 @@ public:
     }
     if (arrayinitvalue)
     {
-      arrayinitvalue->init(dim, ident, depth + 1);
+      arrayinitvalue->init(dim, Ident, depth + 1);
       int repeat = (curr + sz - 1) / sz * sz - curr;
       for (int i = 0; i < repeat; ++i)
       {
-        std::string dst = BaseAST::Fetch(dim, ident, curr, dim.size() - 1);
+        std::string dst = BaseAST::Fetch(dim, Ident, curr, dim.size() - 1);
         curr++;
         std::cout << "  store " << "0" << ", " << dst << std::endl;
       }
@@ -905,8 +905,8 @@ public:
 class VarDefAST: public BaseAST
 {
 public:
-  std::string ident;
-  std::unique_ptr<BaseAST> arraydef;
+  std::string Ident;
+  std::unique_ptr<BaseAST> Arraydef;
   std::unique_ptr<BaseAST> initvalue;
   std::unique_ptr<BaseAST> vardef;
   std::string dump() const override
@@ -914,25 +914,25 @@ public:
     if (debug) std::cout << "VarDefAST:" << std::endl;
     if (currentsymbt == NULL)  //global var
     {
-      if (arraydef == NULL)    // var
+      if (Arraydef == NULL)    // var
       {
         if (initvalue == NULL)
         {
-          symbt.globalsymbol[ident] = {0, 0, ident + "_00"};
-          std::cout << "global @" << ident + "_00" << " = alloc i32, zeroinit" << std::endl;
+          symbt.globalsymbol[Ident] = {0, 0, Ident + "_00"};
+          std::cout << "global @" << Ident + "_00" << " = alloc i32, zeroinit" << std::endl;
         }
         else
         {
           int init = initvalue->cal();
-          symbt.globalsymbol[ident] = {0, init, ident + "_00"};
-          std::cout << "global @" << ident + "_00" << " = alloc i32, " << init << std::endl;
+          symbt.globalsymbol[Ident] = {0, init, Ident + "_00"};
+          std::cout << "global @" << Ident + "_00" << " = alloc i32, " << init << std::endl;
         }
       }
       else   // array
       {
         if (initvalue == NULL || ((InitValAST *)initvalue.get())->zeroinit == 1)
         {
-          std::string arrdim = arraydef->ArrayCal();
+          std::string arrdim = Arraydef->ArrayCal();
           char *spl = std::strtok((char *)arrdim.c_str(), ",");
           std::vector<int> dim;
           while(spl)
@@ -940,12 +940,12 @@ public:
             dim.push_back(atoi(spl));
             spl = strtok(NULL, ",");
           }
-          symbt.globalsymbol[ident] = {2, (int)dim.size(), ident + "_00"};
-          std::cout << "global @" << ident + "_00" << " = alloc " << globalstr << ", zeroinit" << std::endl;
+          symbt.globalsymbol[Ident] = {2, (int)dim.size(), Ident + "_00"};
+          std::cout << "global @" << Ident + "_00" << " = alloc " << globalstr << ", zeroinit" << std::endl;
         }
         else
         {
-          std::string arrdim = arraydef->ArrayCal();
+          std::string arrdim = Arraydef->ArrayCal();
           char *spl = std::strtok((char *)arrdim.c_str(), ",");
           std::vector<int> dim;
           while(spl)
@@ -953,8 +953,8 @@ public:
             dim.push_back(atoi(spl));
             spl = strtok(NULL, ",");
           }
-          symbt.globalsymbol[ident] = {2, (int)dim.size(), ident + "_00"};
-          std::cout << "global @" << ident + "_00" << " = alloc " << globalstr << ", ";
+          symbt.globalsymbol[Ident] = {2, (int)dim.size(), Ident + "_00"};
+          std::cout << "global @" << Ident + "_00" << " = alloc " << globalstr << ", ";
 
 
           int k = 1;
@@ -974,41 +974,41 @@ public:
     }
     else     // local
     {
-      if (arraydef == NULL)   // var
+      if (Arraydef == NULL)   // var
       {
         if (initvalue == NULL)
         {
-          if (currentsymbt->nameset.count(ident + std::string("_") + std::to_string(currentsymbt->dep)) == 0)
+          if (currentsymbt->nameset.count(Ident + std::string("_") + std::to_string(currentsymbt->dep)) == 0)
           {
-            currentsymbt->nameset.insert(ident + std::string("_") + std::to_string(currentsymbt->dep));
-            std::cout << "  @" << ident << "_" << currentsymbt->dep << " = alloc i32" << std::endl;
+            currentsymbt->nameset.insert(Ident + std::string("_") + std::to_string(currentsymbt->dep));
+            std::cout << "  @" << Ident << "_" << currentsymbt->dep << " = alloc i32" << std::endl;
           }
-          currentsymbt->smap[currentsymbt->dep][ident] = {0, 0, ident + std::string("_") + std::to_string(currentsymbt->dep)};
-          std::cout << "  store 0, @" << ident << "_" << currentsymbt->dep << std::endl;
+          currentsymbt->smap[currentsymbt->dep][Ident] = {0, 0, Ident + std::string("_") + std::to_string(currentsymbt->dep)};
+          std::cout << "  store 0, @" << Ident << "_" << currentsymbt->dep << std::endl;
         }
         else
         {
-          if (currentsymbt->nameset.count(ident + std::string("_") + std::to_string(currentsymbt->dep)) == 0)
+          if (currentsymbt->nameset.count(Ident + std::string("_") + std::to_string(currentsymbt->dep)) == 0)
           {
-            currentsymbt->nameset.insert(ident + std::string("_") + std::to_string(currentsymbt->dep));
-            std::cout << "  @" << ident << "_" << currentsymbt->dep << " = alloc i32" << std::endl;
+            currentsymbt->nameset.insert(Ident + std::string("_") + std::to_string(currentsymbt->dep));
+            std::cout << "  @" << Ident << "_" << currentsymbt->dep << " = alloc i32" << std::endl;
           }
-          currentsymbt->smap[currentsymbt->dep][ident] = {0, 0, ident + std::string("_") + std::to_string(currentsymbt->dep)};
+          currentsymbt->smap[currentsymbt->dep][Ident] = {0, 0, Ident + std::string("_") + std::to_string(currentsymbt->dep)};
           initvalue->dump();
-          std::cout << "  store %" << now << ", @" << ident << "_" << currentsymbt->dep << std::endl;
+          std::cout << "  store %" << now << ", @" << Ident << "_" << currentsymbt->dep << std::endl;
         }
       }
       else     //array
       {
         if (initvalue == NULL)
         {
-          if (currentsymbt->nameset.count(ident + std::string("_") + std::to_string(currentsymbt->dep)) == 0)
+          if (currentsymbt->nameset.count(Ident + std::string("_") + std::to_string(currentsymbt->dep)) == 0)
           {
-            currentsymbt->nameset.insert(ident + std::string("_") + std::to_string(currentsymbt->dep));
-            std::string arrdim = arraydef->ArrayCal();
-            std::cout << "  @" << ident << "_" << currentsymbt->dep << " = alloc " << globalstr << std::endl;
+            currentsymbt->nameset.insert(Ident + std::string("_") + std::to_string(currentsymbt->dep));
+            std::string arrdim = Arraydef->ArrayCal();
+            std::cout << "  @" << Ident << "_" << currentsymbt->dep << " = alloc " << globalstr << std::endl;
           }
-          std::string arrdim = arraydef->ArrayCal();
+          std::string arrdim = Arraydef->ArrayCal();
           char *spl = std::strtok((char *)arrdim.c_str(), ",");
           std::vector<int> dim;
           while(spl)
@@ -1016,15 +1016,15 @@ public:
             dim.push_back(atoi(spl));
             spl = strtok(NULL, ",");
           }
-          currentsymbt->smap[currentsymbt->dep][ident] = {2, (int)dim.size(), ident + std::string("_") + std::to_string(currentsymbt->dep)};
+          currentsymbt->smap[currentsymbt->dep][Ident] = {2, (int)dim.size(), Ident + std::string("_") + std::to_string(currentsymbt->dep)};
         }
         else
         {
-          if (currentsymbt->nameset.count(ident + std::string("_") + std::to_string(currentsymbt->dep)) == 0)
+          if (currentsymbt->nameset.count(Ident + std::string("_") + std::to_string(currentsymbt->dep)) == 0)
           {
-            currentsymbt->nameset.insert(ident + std::string("_") + std::to_string(currentsymbt->dep));
-            std::string arrdim = arraydef->ArrayCal();
-            std::cout << "  @" << ident << "_" << currentsymbt->dep << " = alloc " << globalstr << std::endl;
+            currentsymbt->nameset.insert(Ident + std::string("_") + std::to_string(currentsymbt->dep));
+            std::string arrdim = Arraydef->ArrayCal();
+            std::cout << "  @" << Ident << "_" << currentsymbt->dep << " = alloc " << globalstr << std::endl;
 
             char *spl = std::strtok((char *)arrdim.c_str(), ",");
             std::vector<int> dim;
@@ -1034,12 +1034,12 @@ public:
               spl = strtok(NULL, ",");
             }
             curr = 0;
-            initvalue->init(dim, std::string("@") + ident + "_" + std::to_string(currentsymbt->dep), 0);
-            currentsymbt->smap[currentsymbt->dep][ident] = {2, (int)dim.size(), ident + std::string("_") + std::to_string(currentsymbt->dep)};
+            initvalue->init(dim, std::string("@") + Ident + "_" + std::to_string(currentsymbt->dep), 0);
+            currentsymbt->smap[currentsymbt->dep][Ident] = {2, (int)dim.size(), Ident + std::string("_") + std::to_string(currentsymbt->dep)};
           }
           else
           {
-            std::string arrdim = arraydef->ArrayCal();
+            std::string arrdim = Arraydef->ArrayCal();
             char *spl = std::strtok((char *)arrdim.c_str(), ",");
             std::vector<int> dim;
             while(spl)
@@ -1047,7 +1047,7 @@ public:
               dim.push_back(atoi(spl));
               spl = strtok(NULL, ",");
             }
-            currentsymbt->smap[currentsymbt->dep][ident] = {2, (int)dim.size(), ident + std::string("_") + std::to_string(currentsymbt->dep)};
+            currentsymbt->smap[currentsymbt->dep][Ident] = {2, (int)dim.size(), Ident + std::string("_") + std::to_string(currentsymbt->dep)};
           }
         }
       }
@@ -1325,24 +1325,24 @@ public:
 class LValAST: public BaseAST
 {
 public:
-  std::string ident;
+  std::string Ident;
   std::unique_ptr<BaseAST> arrayexp;
   std::string dump() const override
   {
     std::map<std::string, Symbol>::iterator it;
     if (currentsymbt == NULL)
     {
-      it = symbt.globalsymbol.find(ident);
+      it = symbt.globalsymbol.find(Ident);
     }
     else
     {
       for (int d = currentsymbt->dep; d >= 0; d--)
       {
-        if ((it = currentsymbt->smap[d].find(ident)) != currentsymbt->smap[d].end())
+        if ((it = currentsymbt->smap[d].find(Ident)) != currentsymbt->smap[d].end())
           break;
       }
       if (it == currentsymbt->smap[0].end())
-        it = symbt.globalsymbol.find(ident);
+        it = symbt.globalsymbol.find(Ident);
     }
     if (arrayexp == NULL)
     {
@@ -1421,17 +1421,17 @@ public:
     std::map<std::string, Symbol>::iterator it;
     if (currentsymbt == NULL)
     {
-      it = symbt.globalsymbol.find(ident);
+      it = symbt.globalsymbol.find(Ident);
     }
     else
     {
       for (int d = currentsymbt->dep; d >= 0; d--)
       {
-        if ((it = currentsymbt->smap[d].find(ident)) != currentsymbt->smap[d].end())
+        if ((it = currentsymbt->smap[d].find(Ident)) != currentsymbt->smap[d].end())
           break;
       }
       if (it == currentsymbt->smap[0].end())
-        it = symbt.globalsymbol.find(ident);
+        it = symbt.globalsymbol.find(Ident);
     }
     if (arrayexp == NULL)
     {
@@ -1521,17 +1521,17 @@ public:
     std::map<std::string, Symbol>::iterator it;
     if (currentsymbt == NULL)
     {
-      it = symbt.globalsymbol.find(ident);
+      it = symbt.globalsymbol.find(Ident);
       return it->second.value;
     }
     for (int d = currentsymbt->dep; d >= 0; d--)
     {
-      if ((it = currentsymbt->smap[d].find(ident)) != currentsymbt->smap[d].end())
+      if ((it = currentsymbt->smap[d].find(Ident)) != currentsymbt->smap[d].end())
         break;
     }
     if (it == currentsymbt->smap[0].end())
     {
-      it = symbt.globalsymbol.find(ident);
+      it = symbt.globalsymbol.find(Ident);
     }
     return it->second.value;
   }
@@ -1541,12 +1541,12 @@ public:
     std::map<std::string, Symbol>::iterator it;
     for (int d = currentsymbt->dep; d >= 0; d--)
     {
-      if ((it = currentsymbt->smap[d].find(ident)) != currentsymbt->smap[d].end())
+      if ((it = currentsymbt->smap[d].find(Ident)) != currentsymbt->smap[d].end())
         break;
     }
     if (it == currentsymbt->smap[0].end())
     {
-      it = symbt.globalsymbol.find(ident);
+      it = symbt.globalsymbol.find(Ident);
     }
     if (arrayexp == NULL)
       std::cout << "  store " << s << ", @" << it->second.str << std::endl;
@@ -1651,7 +1651,7 @@ class UnaryExpAST: public BaseAST
 {
 public:
   int type;
-  std::string op_ident;
+  std::string op_Ident;
   std::unique_ptr<BaseAST> unaryexp_paras;
   std::string dump() const override
   {
@@ -1663,12 +1663,12 @@ public:
     else if (type == 1)
     {
       unaryexp_paras->dump();
-      if (op_ident == "!")
+      if (op_Ident == "!")
       {
         std::cout << "  %" << now + 1;
         std::cout << " = eq %" << now++ << ", 0" << std::endl;
       }
-      else if (op_ident == "-")
+      else if (op_Ident == "-")
       {
         std::cout << "  %" << now + 1;
         std::cout << " = sub 0, %" << now++ << std::endl;
@@ -1676,27 +1676,27 @@ public:
     }
     else if (type == 2)
     {
-      if (symbt.globalsymbol[op_ident].type == 3)
+      if (symbt.globalsymbol[op_Ident].type == 3)
       {
-        std::cout << "  %" << now + 1 << " = call @" << op_ident << "()" << std::endl;
+        std::cout << "  %" << now + 1 << " = call @" << op_Ident << "()" << std::endl;
         now++;
       }
       else
       {
-        std::cout << "  call @" << op_ident << "()" << std::endl;
+        std::cout << "  call @" << op_Ident << "()" << std::endl;
       }
     }
     else if (type == 3)
     {
       std::string s0 = unaryexp_paras->dump();
-      if (symbt.globalsymbol[op_ident].type == 3)
+      if (symbt.globalsymbol[op_Ident].type == 3)
       {
-        std::cout << "  %" << now + 1 << " = call @" << op_ident << "(" << s0 << ")" << std::endl;
+        std::cout << "  %" << now + 1 << " = call @" << op_Ident << "(" << s0 << ")" << std::endl;
         now++;
       }
       else
       {
-        std::cout << "  call @" << op_ident << "(" << s0 << ")" << std::endl;
+        std::cout << "  call @" << op_Ident << "(" << s0 << ")" << std::endl;
       }
     }
     std::string s1 = "%" + std::to_string(now);
@@ -1714,12 +1714,12 @@ public:
     else if (type == 1)
     {
       unaryexp_paras->ddump();
-      if (op_ident[0] == '!')
+      if (op_Ident[0] == '!')
       {
         std::cout << "  %" << now + 1;
         std::cout << " = eq %" << now++ << ", 0" << std::endl;
       }
-      else if (op_ident[0] == '-')
+      else if (op_Ident[0] == '-')
       {
         std::cout << "  %" << now + 1;
         std::cout << " = sub 0, %" << now++ << std::endl;
@@ -1727,27 +1727,27 @@ public:
     }
     else if (type == 2)
     {
-      if (symbt.globalsymbol[op_ident].type == 3)
+      if (symbt.globalsymbol[op_Ident].type == 3)
       {
-        std::cout << "  %" << now + 1 << " = call @" << op_ident << "()" << std::endl;
+        std::cout << "  %" << now + 1 << " = call @" << op_Ident << "()" << std::endl;
         now++;
       }
       else
       {
-        std::cout << "  call @" << op_ident << "()" << std::endl;
+        std::cout << "  call @" << op_Ident << "()" << std::endl;
       }
     }
     else if (type == 3)
     {
       std::string s0 = unaryexp_paras->ddump();
-      if (symbt.globalsymbol[op_ident].type == 3)
+      if (symbt.globalsymbol[op_Ident].type == 3)
       {
-        std::cout << "  %" << now + 1 << " = call @" << op_ident << "(" << s0 << ")" << std::endl;
+        std::cout << "  %" << now + 1 << " = call @" << op_Ident << "(" << s0 << ")" << std::endl;
         now++;
       }
       else
       {
-        std::cout << "  call @" << op_ident << "(" << s0 << ")" << std::endl;
+        std::cout << "  call @" << op_Ident << "(" << s0 << ")" << std::endl;
       }
     }
     std::string s1 = "%" + std::to_string(now);
@@ -1758,9 +1758,9 @@ public:
   {
     if (type == 0 || type == 1)
     {
-      if (op_ident == "!")
+      if (op_Ident == "!")
         return !(unaryexp_paras->cal());
-      else if (op_ident == "-")
+      else if (op_Ident == "-")
         return -(unaryexp_paras->cal());
       else
         return unaryexp_paras->cal();
